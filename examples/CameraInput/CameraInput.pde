@@ -24,7 +24,7 @@ the focus region.
 */
 
 void setup() {
-  size(800, 800);
+  size(600, 600);
   cam = new Capture(this, 320, 240);
   cam.start();
   
@@ -45,9 +45,9 @@ void draw() {
     cam.read();
   }
   
-  // set the output image, where width and height are the final
-  // warped image size
+  // warp the selected region on the input image (cam) to an output image of width x height
   out = attention.focus(cam, width, height);
   
+  // display the resulting image
   image(out, 0, 0);
 }
