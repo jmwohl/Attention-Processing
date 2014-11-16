@@ -46,6 +46,7 @@ void draw() {
   }
   
   // warp the selected region on the input image (cam) to an output image of width x height
+  // i.e. 'focus' the 'attention' on cam
   out = attention.focus(cam, width, height);
   
   // display the resulting image

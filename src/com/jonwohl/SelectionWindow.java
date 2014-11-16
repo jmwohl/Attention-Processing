@@ -1,6 +1,7 @@
 package com.jonwohl;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import processing.core.*;
 import processing.event.KeyEvent;
@@ -10,6 +11,8 @@ public class SelectionWindow {
 	public boolean display = false;
 
 	private ArrayList<Vertex> vertices;
+	
+	private String[] corners;
 
 	private PApplet parent;
 
@@ -19,15 +22,32 @@ public class SelectionWindow {
 		this.registerParentMethods();
 
 		vertices = new ArrayList<Vertex>();
+		
+		corners = this.parent.loadStrings("corners.txt");
 
-		// top left
-		vertices.add(new Vertex(this.parent, 0, 0));
-		// top right
-		vertices.add(new Vertex(this.parent, attn.inputW, 0));
-		// bottom right
-		vertices.add(new Vertex(this.parent, attn.inputW, attn.inputH));
-		// bottom left
-		vertices.add(new Vertex(this.parent, 0, attn.inputH));
+		if (corners != null) {
+			// top left
+			List<Integer> tl = this.parseCoords(corners[0]);
+			vertices.add(new Vertex(this.parent, tl.get(0), tl.get(1)));
+			// top right
+			List<Integer> tr = this.parseCoords(corners[1]);
+			vertices.add(new Vertex(this.parent, tr.get(0), tr.get(1)));
+			// bottom right
+			List<Integer> br = this.parseCoords(corners[2]);
+			vertices.add(new Vertex(this.parent, br.get(0), br.get(1)));
+			// bottom left
+			List<Integer> bl = this.parseCoords(corners[3]);
+			vertices.add(new Vertex(this.parent, bl.get(0), bl.get(1)));
+		} else {
+			// top left
+			vertices.add(new Vertex(this.parent, 0, 0));
+			// top right
+			vertices.add(new Vertex(this.parent, attn.inputW, 0));
+			// bottom right
+			vertices.add(new Vertex(this.parent, attn.inputW, attn.inputH));
+			// bottom left
+			vertices.add(new Vertex(this.parent, 0, attn.inputH));
+		}
 
 	}
 
@@ -38,8 +58,19 @@ public class SelectionWindow {
 		// parent.registerMethod("pre", this);
 		parent.registerMethod("draw", this);
 		parent.registerMethod("mouseEvent", this);
-		// parent.registerMethod("keyEvent", this);
+//		parent.registerMethod("keyEvent", this);
 		// parent.registerMethod("dispose", this);
+	}
+	
+	private List<Integer> parseCoords(String coords) {
+		String[] tokens = coords.split(",");
+		List<Integer> coordsList = new ArrayList<Integer>();
+		for (int i = 0; i < tokens.length; i++) {
+			System.out.println(tokens[i]);
+			Double db = Double.parseDouble(tokens[i]);
+		    coordsList.add(db.intValue());
+		}
+		return coordsList;
 	}
 
 	/**
@@ -116,6 +147,15 @@ public class SelectionWindow {
 
 		return points;
 	}
+	
+	public String[] getPointsAsStringArray() {
+		String points = "";
+		for (int i = 0; i < vertices.size(); i++) {
+			points += vertices.get(i).x() + "," + vertices.get(i).y() + " ";
+		}
+		points.trim();
+		return points.split(" ");
+	}
 
 	/**
 	 * Pass mousePressed events to vertices
@@ -133,6 +173,7 @@ public class SelectionWindow {
 		for (int i = 0; i < vertices.size(); i++) {
 			vertices.get(i).mouseReleased();
 		}
+		this.parent.saveStrings("corners.txt", this.getPointsAsStringArray());
 	}
 
 	/**
