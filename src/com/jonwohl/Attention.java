@@ -299,6 +299,15 @@ public class Attention implements PConstants {
 			break;
 		}
 	}
+	
+	/**
+	 * Get the four vertices as points
+	 * 
+	 * @return
+	 */
+	public ArrayList<PVector> getPoints() {
+		return window.getPoints();
+	}
 
 	/**
 	 * Handle key events
